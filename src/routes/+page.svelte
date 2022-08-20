@@ -1,20 +1,14 @@
 <script lang="ts">
-	import type { PageData } from './$types';
+	import { enhance } from '$lib/form';
 	import { States, currentState, updateState } from '$lib/state';
+	let submitButtonDisabled = false;
 
-	export let data: PageData;
+	let questions: string[] = [];
 
-	const handleSubmit = (event: Event) => {
-		// TODO: maybe the state update shouldn't be right here
-		updateState(States.EEOC);
+	const getQuestions = (): string[] => {
+		return ['a', 'b', 'c'];
 	};
 </script>
-
-<button
-	on:click={() => {
-		updateState(States.Welcome);
-	}}>restart</button
->
 
 {#if $currentState === States.Welcome}
 	<h1>welcome to the test</h1>
@@ -62,10 +56,30 @@
 	>
 {:else if $currentState === States.Form}
 	<h1>user form</h1>
-	<form action="/user" method="post">
+	<form
+		action="/user"
+		method="post"
+		use:enhance={{
+			pending: async () => {
+				submitButtonDisabled = true;
+			},
+			result: async () => {
+				updateState(States.EEOC);
+				submitButtonDisabled = false;
+				questions = getQuestions();
+			},
+			error: async () => {
+				console.log('error');
+			}
+		}}
+	>
 		<input type="text" name="firstname" placeholder="First name" />
 		<input type="text" name="lastname" placeholder="Last name" />
-		<button type="submit">submit</button>
+		<br />
+		<input type="text" name="phone" placeholder="Phone number" />
+		<input type="text" name="email" placeholder="Email address" />
+		<br />
+		<button type="submit" disabled={submitButtonDisabled}>submit</button>
 	</form>
 {:else if $currentState === States.EEOC}
 	<h1>EEOC</h1>
@@ -82,19 +96,19 @@
 		}}>next</button
 	>
 {:else if $currentState === States.Questions}
-	<h1>you are now in the test</h1>
-	<p>okay this is kinda cool though!!</p>
+	<h1>this is the test</h1>
+	{#if questions && questions.length != 0}
+		{#each questions as q}
+			<p>{q}</p>
+		{/each}
+	{:else}
+		<p>no questions</p>
+	{/if}
 	<button
 		on:click={() => {
 			updateState(States.End);
 		}}>next</button
 	>
-	{data.questions}
 {:else if $currentState === States.End}
 	<h1>the end</h1>
-	<button
-		on:click={() => {
-			updateState(States.Welcome);
-		}}>return to beginning</button
-	>
 {/if}
