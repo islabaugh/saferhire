@@ -1,17 +1,19 @@
 <script lang="ts">
 	import { enhance } from '$lib/form';
 	import { States, currentState, updateState } from '$lib/state';
+	import type { PageData } from './$types';
+	import Questions from './questions.svelte';
+
+	export let data: PageData;
 	let submitButtonDisabled = false;
-
-	let questions: string[] = [];
-
-	const getQuestions = (): string[] => {
-		return ['a', 'b', 'c'];
-	};
 </script>
 
+image hosted at {data.image_path}
 {#if $currentState === States.Welcome}
-	<h1>welcome to the test</h1>
+	<h1>
+		welcome to {data.company_name}
+	</h1>
+	<h2>prepare yourself, you're about to get tested</h2>
 	<button
 		on:click={() => {
 			updateState(States.LanguageSelect);
@@ -57,7 +59,7 @@
 {:else if $currentState === States.Form}
 	<h1>user form</h1>
 	<form
-		action="/user"
+		action="/test"
 		method="post"
 		use:enhance={{
 			pending: async () => {
@@ -66,10 +68,9 @@
 			result: async () => {
 				updateState(States.EEOC);
 				submitButtonDisabled = false;
-				questions = getQuestions();
 			},
 			error: async () => {
-				console.log('error');
+				submitButtonDisabled = false;
 			}
 		}}
 	>
@@ -81,6 +82,11 @@
 		<br />
 		<button type="submit" disabled={submitButtonDisabled}>submit</button>
 	</form>
+	<button
+		on:click={() => {
+			updateState(States.EEOC);
+		}}>skip</button
+	>
 {:else if $currentState === States.EEOC}
 	<h1>EEOC</h1>
 	<button
@@ -97,13 +103,7 @@
 	>
 {:else if $currentState === States.Questions}
 	<h1>this is the test</h1>
-	{#if questions && questions.length != 0}
-		{#each questions as q}
-			<p>{q}</p>
-		{/each}
-	{:else}
-		<p>no questions</p>
-	{/if}
+	<Questions />
 	<button
 		on:click={() => {
 			updateState(States.End);
@@ -112,3 +112,21 @@
 {:else if $currentState === States.End}
 	<h1>the end</h1>
 {/if}
+
+<button
+	on:click={() => {
+		updateState(States.Welcome);
+	}}>to beginning</button
+>
+
+<style>
+	:global(html, body) {
+		margin: 0;
+		width: 100%;
+		height: 100%;
+	}
+
+	:global(body) {
+		background: linear-gradient(white, #b0c4ff);
+	}
+</style>

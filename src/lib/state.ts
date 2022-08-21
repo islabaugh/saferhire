@@ -1,4 +1,4 @@
-import { writable, type Writable } from 'svelte/store';
+import { writable } from 'svelte/store';
 
 export enum States {
 	Welcome,
@@ -12,7 +12,5 @@ export enum States {
 	End
 }
 
-export const currentState: Writable<States> = writable(States.Welcome);
-export const updateState = (newState: States) => {
-	currentState.set(newState);
-};
+export const currentState = writable(States.Welcome);
+export const updateState = (newState: States) => currentState.set(newState);
