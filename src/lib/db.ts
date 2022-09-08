@@ -91,7 +91,6 @@ class Database {
 			}
 		);
 		await connection.close();
-		console.log(results);
 		const parsedResults = z
 			.object({ applt_id: z.number() })
 			.array()
