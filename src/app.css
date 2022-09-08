@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .btn {
-	@apply bg-blue-500 rounded text-white p-3 w-44 hover:bg-blue-700 transition ease-out duration-200 text-base inline-block disabled:bg-blue-200;
+	@apply bg-blue-500 rounded text-white p-3 w-44 hover:bg-blue-700 transition ease-out duration-200 text-base inline-block disabled:bg-blue-200 h-fit;
 }
 
 .header-text {

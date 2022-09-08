@@ -68,4 +68,4 @@
 		>Submit</button
 	>
 </form>
-<a class="btn" href="eeoc" sveltekit:prefetch>Skip (temporary)</a>
+<a class="btn" href="eeoc" sveltekit:prefetch>Skip (for debug)</a>
